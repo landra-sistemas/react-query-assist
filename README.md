@@ -128,4 +128,4 @@ By default, [keyboard helpers](#keyboardHelpers) for the dropdown are enabled. M
 | `debug`                                         | boolean   | Enables styling useful for debugging.                                                                                                                   | `false`       |
 | `translations`                                  | object    | Object to translate the NEGATE and other static strings: {negate: "", navigate: "", select: ""}                                                         | undefined     |
 
-[demo] demo.gif
+[demo]: demo.gif
