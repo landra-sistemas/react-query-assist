@@ -1,12 +1,15 @@
 {
-  "name": "react-query-assist",
+  "name": "@thorin8k/react-query-assist",
   "version": "2.0.0",
   "description": "A smart search bar for React",
   "license": "MIT",
-  "homepage": "https://react-query-assist.netlify.com",
+  "homepage": "https://github.com/thorin8k/react-query-assist",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/timberio/react-query-assist.git"
+    "url": "git+https://github.com/thorin8k/react-query-assist.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "keywords": [
     "react",

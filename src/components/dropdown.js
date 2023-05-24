@@ -30,7 +30,8 @@ export default class extends PureComponent {
     footerComponent: PropTypes.func,
     dropdownProps: PropTypes.object,
     selectorProps: PropTypes.object,
-    listProps: PropTypes.object
+    listProps: PropTypes.object,
+    translations: PropTypes.object
   }
 
   static defaultProps = {
@@ -197,7 +198,11 @@ export default class extends PureComponent {
       if (parsed.attributeValue && attribute.type === 'string') {
         parsed.quoted && !attribute.enumerations
           ? addons.push(`"${parsed.attributeValue}*"`)
-          : addons.push(`${parsed.attributeValue}*`)
+          : addons.push(
+              `*${parsed.attributeValue}*`,
+              `${parsed.attributeValue}*`,
+              `*${parsed.attributeValue}`
+            )
       }
     }
 
@@ -336,7 +341,9 @@ export default class extends PureComponent {
             onClick={() => this.setOperator('-')}
           >
             <Key>-</Key>
-            NEGATE
+            {this.props.translations && this.props.translations.negate
+              ? this.props.translations.negate
+              : 'NEGATE'}
           </OperatorLone>
 
           {this.getOperators().map((operator, key) => (
@@ -356,12 +363,16 @@ export default class extends PureComponent {
             <Helper>
               <KeyOutline>▲</KeyOutline>
               <KeyOutline>▼</KeyOutline>
-              to navigate
+              {this.props.translations && this.props.translations.navigate
+                ? this.props.translations.navigate
+                : 'to navigate'}
             </Helper>
 
             <Helper>
               <KeyOutline long>↵</KeyOutline>
-              to select
+              {this.props.translations && this.props.translations.select
+                ? this.props.translations.select
+                : 'to select'}
             </Helper>
           </Section>
         )}

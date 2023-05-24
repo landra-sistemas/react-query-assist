@@ -30,7 +30,9 @@ export default class extends Component {
     inputProps: PropTypes.object,
     dropdownProps: PropTypes.object,
     selectorProps: PropTypes.object,
-    listProps: PropTypes.object
+    listProps: PropTypes.object,
+    alwaysLeft: PropTypes.bool, // Choose if element will be always left
+    translations: PropTypes.object
   }
 
   static defaultProps = {
@@ -360,7 +362,9 @@ export default class extends Component {
       footerComponent,
       dropdownProps,
       selectorProps,
-      listProps
+      listProps,
+      alwaysLeft,
+      translations
     } = this.props
 
     const {
@@ -408,11 +412,12 @@ export default class extends Component {
               nameKey={nameKey}
               onSelect={this.onSelectValue}
               onClose={this.onClose}
-              offsetX={dropdownX}
+              offsetX={alwaysLeft ? 0 : dropdownX}
               offsetY={dropdownY}
               dropdownProps={dropdownProps}
               selectorProps={selectorProps}
               listProps={listProps}
+              translations={translations}
             />
           )}
         </Container>
