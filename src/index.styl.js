@@ -1,11 +1,9 @@
-import styled, { css } from 'react-emotion'
+import styled from '@emotion/styled'
+import { css } from '@emotion/css'
 import Textarea from 'react-textarea-autosize'
-import clean from 'clean-element'
 
 import {
   style,
-  propTypes,
-
   space,
   width,
   color,
@@ -50,13 +48,7 @@ InputContainer.defaultProps = {
   fontFamily: 'monospace'
 }
 
-const CleanInput = clean(Textarea)
-
-CleanInput.propTypes = {
-  placeholderColor: propTypes.color.color,
-  ...propTypes.lineHeight,
-  ...propTypes.borderRadius
-}
+const CleanInput = Textarea
 
 const placeholderColor = style({
   prop: 'placeholderColor',
@@ -109,11 +101,13 @@ export const Overlay = styled('div')`
   pointer-events: none;
   padding: inherit;
 
-  ${props => props.collapsed && css`
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  `}
+  ${props =>
+    props.collapsed &&
+    css`
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    `}
 
   /* reversed from Input above */
   -webkit-text-fill-color: initial;
@@ -141,25 +135,28 @@ export const Token = styled(Inline)`
   font-weight: 500;
 
   ${tokenColor}
-
-  ${'' /* &:after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    opacity: 0;
-    transform: translateY(3px);
-    transition: all 150ms;
-
-    ${tokenUnderline}
-  } */}
-  ${'' /* &:hover:after {
-    opacity: 1;
-    transform: translateY(0px);
-  } */}
 `
+// ${
+//     '' /* &:after {
+//     content: '';
+//     position: absolute;
+//     top: 100%;
+//     left: 0;
+//     right: 0;
+//     height: 1px;
+//     opacity: 0;
+//     transform: translateY(3px);
+//     transition: all 150ms;
+
+//     ${tokenUnderline}
+//   } */
+//   }
+//   ${
+//     '' /* &:hover:after {
+//     opacity: 1;
+//     transform: translateY(0px);
+//   } */
+//   }
 
 Token.defaultProps = {
   tokenColor: '#2384FF'

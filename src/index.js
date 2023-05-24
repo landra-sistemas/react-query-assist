@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import PageClick from 'react-page-click'
 import { extractTokens } from './utils/token'
 import Dropdown from './components/dropdown'
+import OutsideAlerter from './utils/outside-click'
 
 import {
   Container,
@@ -14,7 +14,8 @@ import {
 } from './index.styl'
 
 export default class extends Component {
-  static propTypes = { // eslint-disable-line
+  static propTypes = {
+    // eslint-disable-line
     debug: PropTypes.bool,
     data: PropTypes.array,
     nameKey: PropTypes.string,
@@ -32,7 +33,8 @@ export default class extends Component {
     listProps: PropTypes.object
   }
 
-  static defaultProps = { // eslint-disable-line
+  static defaultProps = {
+    // eslint-disable-line
     data: [],
     nameKey: 'name',
     nameKeyIncludes: ['name'],
@@ -81,10 +83,7 @@ export default class extends Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    const {
-      value,
-      attributes
-    } = this.state
+    const { value, attributes } = this.state
 
     if (value !== prevState.value) {
       this.props.onChange(value)
@@ -94,9 +93,12 @@ export default class extends Component {
       value !== prevState.value ||
       attributes.length !== prevState.attributes.length
     ) {
-      this.setState({
-        overlayComponents: this.buildOverlay(value)
-      }, this.onAutosuggest)
+      this.setState(
+        {
+          overlayComponents: this.buildOverlay(value)
+        },
+        this.onAutosuggest
+      )
     }
   }
 
@@ -116,9 +118,12 @@ export default class extends Component {
   }
 
   onFocus (evt) {
-    this.setState({
-      focused: true
-    }, this.onAutosuggest)
+    this.setState(
+      {
+        focused: true
+      },
+      this.onAutosuggest
+    )
   }
 
   onBlur (evt) {
@@ -146,10 +151,7 @@ export default class extends Component {
 
   onAutosuggest () {
     const { value } = this.state
-    const {
-      offsetLeft,
-      offsetTop
-    } = this._marker
+    const { offsetLeft, offsetTop } = this._marker
 
     const { chunk } = this.getCurrentChunk(value)
     const suggest = this.shouldAutosuggest(chunk)
@@ -171,24 +173,24 @@ export default class extends Component {
 
   onSelectValue (chunk, appended = '') {
     const { value } = this.state
-    const {
-      index,
-      indexEnd
-    } = this.getCurrentChunk(value)
+    const { index, indexEnd } = this.getCurrentChunk(value)
 
     const before = value.slice(0, index)
     const after = value.slice(indexEnd)
     const position = index + chunk.length + appended.length
     // const positionEnd = position + after.length
 
-    this.setState({
-      value: `${before}${chunk}${appended}${after}`,
-      dropdownClosed: appended !== ':'
-    }, () => {
-      // position caret at the end of the inserted value
-      this._input.focus()
-      this._input.setSelectionRange(position, position)
-    })
+    this.setState(
+      {
+        value: `${before}${chunk}${appended}${after}`,
+        dropdownClosed: appended !== ':'
+      },
+      () => {
+        // position caret at the end of the inserted value
+        this._input.focus()
+        this._input.setSelectionRange(position, position)
+      }
+    )
   }
 
   handleEnterKey (evt) {
@@ -208,19 +210,22 @@ export default class extends Component {
     const { value, focused } = this.state
 
     // next character is whitespace, closing paren or null
-    const nextCharIsEmpty = !value.charAt(selectionStart) ||
+    const nextCharIsEmpty =
+      !value.charAt(selectionStart) ||
       /[)\s]/.test(value.charAt(selectionStart))
 
     // whitespace/negation/paren before and whitespace after caret
-    const isNewWord = nextCharIsEmpty &&
-      /[\s-(]/.test(value.charAt(selectionStart - 1))
+    const isNewWord =
+      nextCharIsEmpty && /[\s-(]/.test(value.charAt(selectionStart - 1))
 
     // cursor is at end of the current word
-    const atEndOfWord = nextCharIsEmpty &&
-      /[^)\s]/.test(value.charAt(selectionStart - 1))
+    const atEndOfWord =
+      nextCharIsEmpty && /[^)\s]/.test(value.charAt(selectionStart - 1))
 
-    return focused && (!value || isNewWord ||
-      (atEndOfWord && !this.state.dropdownClosed))
+    return (
+      focused &&
+      (!value || isNewWord || (atEndOfWord && !this.state.dropdownClosed))
+    )
   }
 
   onClose (forWord) {
@@ -245,9 +250,7 @@ export default class extends Component {
   }
 
   getCurrentChunk (value) {
-    const {
-      selectionStart
-    } = this._input
+    const { selectionStart } = this._input
 
     // get location of each token found in value
     const tokens = this.extract(value)
@@ -255,7 +258,9 @@ export default class extends Component {
     // find index of the closest previous whitespace
     const prevStr = value.substring(0, selectionStart)
     const prevMatch = prevStr.match(/[^\s]*$/)
-    const prevIdx = prevMatch ? prevStr.lastIndexOf(prevMatch[prevMatch.length - 1]) : -1
+    const prevIdx = prevMatch
+      ? prevStr.lastIndexOf(prevMatch[prevMatch.length - 1])
+      : -1
 
     // determine correct index for the start of the chunk
     let index = prevIdx
@@ -293,22 +298,26 @@ export default class extends Component {
     const positions = this.extract(value)
 
     let currentPosition = 0
-    positions.reduce((prev, next) => {
-      // const startIdx = next[0] + relativeToIdx
-      // const endIdx = next[1] + relativeToIdx
+    positions.reduce(
+      (prev, next) => {
+        // const startIdx = next[0] + relativeToIdx
+        // const endIdx = next[1] + relativeToIdx
 
-      chunks.push(value.substring(prev[1], next[0]))
-      chunks.push(
-        <Token
-          key={`token-${next[0]}`}
-          tokenColor={this.props.inputProps.tokenColor}>
-          {value.substring(next[0], next[1])}
-        </Token>
-      )
+        chunks.push(value.substring(prev[1], next[0]))
+        chunks.push(
+          <Token
+            key={`token-${next[0]}`}
+            tokenColor={this.props.inputProps.tokenColor}
+          >
+            {value.substring(next[0], next[1])}
+          </Token>
+        )
 
-      currentPosition = next[1]
-      return next
-    }, [null, 0])
+        currentPosition = next[1]
+        return next
+      },
+      [null, 0]
+    )
 
     chunks.push(value.substring(currentPosition))
     return chunks.filter(Boolean)
@@ -333,7 +342,8 @@ export default class extends Component {
       <Inline
         key={`after-${index}`}
         style={{ outline: this.props.debug ? '1px solid red' : 'none' }}
-        innerRef={ref => (this._marker = ref)}>
+        ref={ref => (this._marker = ref)}
+      >
         {stuffOnRight}
       </Inline>
     ]
@@ -366,18 +376,10 @@ export default class extends Component {
     const collapsed = !this.state.focused && collapseOnBlur
 
     return (
-      <PageClick
-        outsideOnly
-        notify={this.onClose}>
-        <Container
-          className={className}>
-          <InputContainer
-            {...inputProps}
-            onClick={() => this._input.focus()}>
-            <Overlay
-              collapsed={collapsed}>
-              {overlayComponents}
-            </Overlay>
+      <OutsideAlerter notify={this.onClose}>
+        <Container className={className}>
+          <InputContainer {...inputProps} onClick={() => this._input.focus()}>
+            <Overlay collapsed={collapsed}>{overlayComponents}</Overlay>
 
             <Input
               autoComplete='off'
@@ -393,10 +395,11 @@ export default class extends Component {
               onBlur={this.onBlur}
               onKeyDown={this.onKeyDown}
               onChange={this.onChange}
-              inputRef={ref => (this._input = ref)} />
+              ref={ref => (this._input = ref)}
+            />
           </InputContainer>
 
-          {dropdownOpen &&
+          {dropdownOpen && (
             <Dropdown
               keyboardHelpers={keyboardHelpers}
               footerComponent={footerComponent}
@@ -409,9 +412,11 @@ export default class extends Component {
               offsetY={dropdownY}
               dropdownProps={dropdownProps}
               selectorProps={selectorProps}
-              listProps={listProps} />}
+              listProps={listProps}
+            />
+          )}
         </Container>
-      </PageClick>
+      </OutsideAlerter>
     )
   }
 }

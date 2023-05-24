@@ -1,13 +1,15 @@
 import Enzyme from 'enzyme'
-import Adapter from 'enzyme-adapter-react-16'
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17'
 import { JSDOM } from 'jsdom'
 
-const {
-  window
-} = new JSDOM('<!doctype html><html><body></body></html>')
+const { window } = new JSDOM('<!doctype html><html><body></body></html>')
 
 global.window = window
 global.document = window.document
+global.document.fonts = {
+  addEventListener: (type, event) => {},
+  removeEventListener: (type, event) => {}
+}
 
 Enzyme.configure({
   adapter: new Adapter()

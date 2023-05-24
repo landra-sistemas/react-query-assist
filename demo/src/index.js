@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
-import styled from 'react-emotion'
-import { injectGlobal } from 'emotion'
+import styled from '@emotion/styled'
+import { injectGlobal } from '@emotion/css'
 import QueryAssist from '../../src'
 
 injectGlobal`
@@ -14,14 +14,14 @@ injectGlobal`
 `
 
 const Container = styled('div')`
-  background: #282B37;
+  background: #282b37;
   width: 100vw;
   height: 100vh;
   padding: 20px;
 `
 
 const Title = styled('h2')`
-  color: #FFFFFF;
+  color: #ffffff;
   margin-bottom: 15px;
   font-weight: 600;
 `
@@ -37,10 +37,10 @@ const Footer = styled('div')`
 
 export const Link = styled('a')`
   display: inline-block;
-  background: #6554AF;
-  border: 1px solid #58499B;
+  background: #6554af;
+  border: 1px solid #58499b;
   border-radius: 4px;
-  color: #FFFFFF;
+  color: #ffffff;
   font-weight: 300;
   text-decoration: none;
   padding: 7px 15px;
@@ -109,7 +109,8 @@ class Demo extends Component {
       <Footer>
         <Link
           target='_blank'
-          href='https://timber.io/docs/app/console/searching'>
+          href='https://timber.io/docs/app/console/searching'
+        >
           Learn more
         </Link>
       </Footer>
@@ -125,7 +126,8 @@ class Demo extends Component {
           inputProps={inputProps}
           dropdownProps={dropdownProps}
           selectorProps={selectorProps}
-          footerComponent={footer} />
+          footerComponent={footer}
+        />
 
         <Title>Complex Query Example</Title>
         <Assist
@@ -136,7 +138,8 @@ class Demo extends Component {
           inputProps={inputProps}
           dropdownProps={dropdownProps}
           selectorProps={selectorProps}
-          footerComponent={footer} />
+          footerComponent={footer}
+        />
       </Container>
     )
   }

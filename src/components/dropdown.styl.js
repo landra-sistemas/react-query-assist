@@ -1,4 +1,5 @@
-import styled, { keyframes } from 'react-emotion'
+import styled from '@emotion/styled'
+import { keyframes } from '@emotion/react'
 
 import {
   top,
@@ -65,9 +66,9 @@ Container.defaultProps = {
 
 export const Section = styled('section')`
   padding: 15px;
-  text-align: ${props => props.center ? 'center' : 'inherit'};
+  text-align: ${props => (props.center ? 'center' : 'inherit')};
   :not(:last-child) {
-    border-bottom: 1px solid rgba(255, 255, 255, .15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   }
 `
 
@@ -114,7 +115,7 @@ export const Operators = styled(Section)`
 
 export const Operator = styled('div')`
   display: inline-block;
-  background: ${props => props.active ? 'rgba(255, 255, 255, 0.2)' : 'none'};
+  background: ${props => (props.active ? 'rgba(255, 255, 255, 0.2)' : 'none')};
   font-weight: 500;
   line-height: 18px;
   padding: 5px 10px;
@@ -149,7 +150,7 @@ export const KeyOutline = styled(Key)`
   color: ${props => props.theme.color};
   font-size: 8px;
   padding: 0;
-  width: ${props => props.long ? '36px' : '18px'};
+  width: ${props => (props.long ? '36px' : '18px')};
   height: 18px;
 `
 

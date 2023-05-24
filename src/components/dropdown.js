@@ -17,7 +17,8 @@ import {
 } from './dropdown.styl'
 
 export default class extends PureComponent {
-  static propTypes = { // eslint-disable-line
+  static propTypes = {
+    // eslint-disable-line
     value: PropTypes.string,
     nameKey: PropTypes.string,
     attributes: PropTypes.array,
@@ -32,7 +33,8 @@ export default class extends PureComponent {
     listProps: PropTypes.object
   }
 
-  static defaultProps = { // eslint-disable-line
+  static defaultProps = {
+    // eslint-disable-line
     value: '',
     nameKey: 'name',
     onSelect: () => {},
@@ -124,28 +126,34 @@ export default class extends PureComponent {
     const max = this.state.suggestions.length - 1
 
     // determine the next position
-    const newIdx = highlightedIdx !== null
-      ? isDownKey ? highlightedIdx + 1 : highlightedIdx - 1
-      : isDownKey ? 0 : max
+    const newIdx =
+      highlightedIdx !== null
+        ? isDownKey
+          ? highlightedIdx + 1
+          : highlightedIdx - 1
+        : isDownKey
+        ? 0
+        : max
 
-    this.setState({
-      // make sure it doesn't go out of bounds by resetting to opposite side
-      highlightedIdx: isDownKey
-        ? newIdx <= max ? newIdx : 0
-        : newIdx >= 0 ? newIdx : max
-    }, this.adjustListScroll)
+    this.setState(
+      {
+        // make sure it doesn't go out of bounds by resetting to opposite side
+        highlightedIdx: isDownKey
+          ? newIdx <= max
+            ? newIdx
+            : 0
+          : newIdx >= 0
+          ? newIdx
+          : max
+      },
+      this.adjustListScroll
+    )
   }
 
   adjustListScroll () {
-    const {
-      offsetTop,
-      clientHeight: selectorHeight
-    } = this._selected
+    const { offsetTop, clientHeight: selectorHeight } = this._selected
 
-    const {
-      scrollTop,
-      clientHeight: listHeight
-    } = this._list
+    const { scrollTop, clientHeight: listHeight } = this._list
 
     const topWaypoint = selectorHeight
     const bottomWaypoint = listHeight - selectorHeight
@@ -154,7 +162,8 @@ export default class extends PureComponent {
     if (position > bottomWaypoint) {
       this._list.scrollTop += selectorHeight + (position - bottomWaypoint)
     } else if (position < topWaypoint) {
-      this._list.scrollTop = offsetTop - selectorHeight + (position - topWaypoint)
+      this._list.scrollTop =
+        offsetTop - selectorHeight + (position - topWaypoint)
     }
   }
 
@@ -165,10 +174,7 @@ export default class extends PureComponent {
   }
 
   getSuggestions (attribute) {
-    const {
-      nameKey,
-      attributes
-    } = this.props
+    const { nameKey, attributes } = this.props
 
     return attribute
       ? attribute.enumerations || []
@@ -188,10 +194,7 @@ export default class extends PureComponent {
         addons.push(`"${parsed.attributeValue}"`)
       }
 
-      if (
-        parsed.attributeValue &&
-        attribute.type === 'string'
-      ) {
+      if (parsed.attributeValue && attribute.type === 'string') {
         parsed.quoted && !attribute.enumerations
           ? addons.push(`"${parsed.attributeValue}*"`)
           : addons.push(`${parsed.attributeValue}*`)
@@ -202,20 +205,19 @@ export default class extends PureComponent {
   }
 
   filterSuggestions (value) {
-    const {
-      nameKey,
-      attributes
-    } = this.props
+    const { nameKey, attributes } = this.props
 
     const parsed = parseToken(value)
 
     const hasAttributeName = parsed.attributeName && value.indexOf(':') > -1
-    const selectedIdx = hasAttributeName ? attributes
-      .findIndex(attr => attr[nameKey] === parsed.attributeName) : -1
+    const selectedIdx = hasAttributeName
+      ? attributes.findIndex(attr => attr[nameKey] === parsed.attributeName)
+      : -1
 
     const attribute = this.getAttribute(selectedIdx)
     const suggestions = this.getSuggestions(attribute)
-    const searchValue = selectedIdx > -1 ? parsed.attributeValue : parsed.attributeName
+    const searchValue =
+      selectedIdx > -1 ? parsed.attributeValue : parsed.attributeName
 
     const filtered = suggestions
       .filter(v => compareFuzzy(searchValue, v))
@@ -232,18 +234,10 @@ export default class extends PureComponent {
   }
 
   acceptSuggestion () {
-    const {
-      nameKey,
-      onSelect
-    } = this.props
+    const { nameKey, onSelect } = this.props
 
-    const {
-      suggestions,
-      highlightedIdx,
-      selectedIdx,
-      prepended,
-      operator
-    } = this.state
+    const { suggestions, highlightedIdx, selectedIdx, prepended, operator } =
+      this.state
 
     const attribute = this.getAttribute(selectedIdx)
     const suggestion = suggestions[highlightedIdx]
@@ -264,10 +258,26 @@ export default class extends PureComponent {
       switch (attribute.type) {
         case 'int':
         case 'float':
-          operators.push({ name: 'GT', char: '>', active: this.state.operator === '>' })
-          operators.push({ name: 'LT', char: '<', active: this.state.operator === '<' })
-          operators.push({ name: 'GTE', char: '>=', active: this.state.operator === '>=' })
-          operators.push({ name: 'LTE', char: '<=', active: this.state.operator === '<=' })
+          operators.push({
+            name: 'GT',
+            char: '>',
+            active: this.state.operator === '>'
+          })
+          operators.push({
+            name: 'LT',
+            char: '<',
+            active: this.state.operator === '<'
+          })
+          operators.push({
+            name: 'GTE',
+            char: '>=',
+            active: this.state.operator === '>='
+          })
+          operators.push({
+            name: 'LTE',
+            char: '<=',
+            active: this.state.operator === '<='
+          })
           break
       }
     }
@@ -276,18 +286,12 @@ export default class extends PureComponent {
   }
 
   setOperator (newOperator) {
-    const {
-      value
-    } = this.props
+    const { value } = this.props
 
-    const {
-      negated,
-      operator
-    } = this.state
+    const { negated, operator } = this.state
 
     if (newOperator === '-') {
-      const newValue = value
-        .replace(/^-?(.*)/, `${negated ? '' : '-'}$1`)
+      const newValue = value.replace(/^-?(.*)/, `${negated ? '' : '-'}$1`)
 
       this.props.onSelect(newValue)
     } else {
@@ -305,10 +309,9 @@ export default class extends PureComponent {
       <Container
         left={this.props.offsetX || 0}
         top={this.props.offsetY || 0}
-        {...this.props.dropdownProps}>
-        <Suggestions
-          {...this.props.listProps}
-          innerRef={ref => (this._list = ref)}>
+        {...this.props.dropdownProps}
+      >
+        <Suggestions {...this.props.listProps} ref={ref => (this._list = ref)}>
           {this.state.suggestions.map((suggestion, key) => {
             const isActive = this.state.highlightedIdx === key
 
@@ -318,8 +321,9 @@ export default class extends PureComponent {
                 active={isActive}
                 onClick={this.acceptSuggestion}
                 onMouseOver={() => this.setState({ highlightedIdx: key })}
-                innerRef={isActive ? ref => (this._selected = ref) : undefined}
-                {...this.props.selectorProps}>
+                ref={isActive ? ref => (this._selected = ref) : undefined}
+                {...this.props.selectorProps}
+              >
                 {suggestion}
               </Suggestion>
             )
@@ -329,22 +333,25 @@ export default class extends PureComponent {
         <Operators>
           <OperatorLone
             active={this.state.negated}
-            onClick={() => this.setOperator('-')}>
+            onClick={() => this.setOperator('-')}
+          >
             <Key>-</Key>
             NEGATE
           </OperatorLone>
 
-          {this.getOperators().map((operator, key) =>
+          {this.getOperators().map((operator, key) => (
             <Operator
               key={key}
               active={operator.active}
-              onClick={() => this.setOperator(operator.char)}>
+              onClick={() => this.setOperator(operator.char)}
+            >
               <Key>{operator.char}</Key>
               {operator.name}
-            </Operator>)}
+            </Operator>
+          ))}
         </Operators>
 
-        {this.props.keyboardHelpers &&
+        {this.props.keyboardHelpers && (
           <Section center>
             <Helper>
               <KeyOutline>▲</KeyOutline>
@@ -356,7 +363,8 @@ export default class extends PureComponent {
               <KeyOutline long>↵</KeyOutline>
               to select
             </Helper>
-          </Section>}
+          </Section>
+        )}
 
         <Footer />
       </Container>

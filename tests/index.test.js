@@ -1,11 +1,20 @@
 import React from 'react'
 import test from 'ava'
 import { mount } from 'enzyme'
+import { CacheProvider } from '@emotion/react'
+import createCache from '@emotion/cache'
 import { mockAttributes, simulateExtra } from './helpers'
 import QueryAssist from '../src'
 
+const myCache = createCache({
+  key: 'my-prefix-key'
+})
 test.beforeEach(t => {
-  t.context.wrapper = mount(<QueryAssist data={mockAttributes} />)
+  t.context.wrapper = mount(
+    <CacheProvider value={myCache}>
+      <QueryAssist data={mockAttributes} />
+    </CacheProvider>
+  )
   simulateExtra(t.context.wrapper)
 })
 
@@ -112,7 +121,11 @@ test('closes dropdown when there is no attribute match', t => {
 
 test('does not open when data attribute changes', t => {
   let attributes = []
-  const wrapper = mount(<QueryAssist data={attributes} />)
+  const wrapper = mount(
+    <CacheProvider value={myCache}>
+      <QueryAssist data={attributes} />
+    </CacheProvider>
+  )
   t.false(wrapper.state('dropdownOpen'))
   wrapper.setProps({ data: mockAttributes })
   t.false(wrapper.state('dropdownOpen'))
@@ -120,9 +133,11 @@ test('does not open when data attribute changes', t => {
 
 test('highlights valid tokens in the query', t => {
   const { wrapper } = t.context
-  wrapper.simulateTyping('foo level:info level:foo bar (foo:bar OR other:"foo bar") other:a* http_response:400 baz http_response:>600')
+  wrapper.simulateTyping(
+    'foo level:info level:foo bar (foo:bar OR other:"foo bar") other:a* http_response:400 baz http_response:>600 '
+  )
   const overlay = wrapper.state('overlayComponents')
-  const content = overlay[1].props.children
+  const content = overlay[0] // overlay[1].props.children
   t.is(content[0], 'foo ')
   t.is(content[1].props.children, 'level:info')
   t.is(content[2], ' level:foo bar (foo:bar OR ')
@@ -131,7 +146,7 @@ test('highlights valid tokens in the query', t => {
   t.is(content[5].props.children, 'other:a*')
   t.is(content[6], ' ')
   t.is(content[7].props.children, 'http_response:400')
-  t.is(content[8], ' baz http_response:>600')
+  t.is(content[8], ' baz http_response:>600 ')
 })
 
 test('inserts selected value at end of query', t => {

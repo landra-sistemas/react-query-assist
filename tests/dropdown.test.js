@@ -1,16 +1,28 @@
-import React from 'react'
+import React, { cloneElement } from 'react'
 import test from 'ava'
 import sinon from 'sinon'
+import { CacheProvider } from '@emotion/react'
+import createCache from '@emotion/cache'
 import { mount } from 'enzyme'
 import { mockAttributes, simulateExtra } from './helpers'
 import Dropdown from '../src/components/dropdown'
 
+const myCache = createCache({
+  key: 'my-prefix-key-drop'
+})
+const drop = (value, t) => (
+  <Dropdown
+    value={value}
+    attributes={mockAttributes}
+    onSelect={t.context.onSelect}
+  />
+)
+
 test.beforeEach(t => {
   t.context.onSelect = sinon.spy()
+
   t.context.wrapper = mount(
-    <Dropdown
-      attributes={mockAttributes}
-      onSelect={t.context.onSelect} />
+    <CacheProvider value={myCache}>{drop(undefined, t)}</CacheProvider>
   )
   simulateExtra(t.context.wrapper)
 })
@@ -18,20 +30,26 @@ test.beforeEach(t => {
 test('basic filtering', t => {
   const { wrapper } = t.context
   t.is(wrapper.state('suggestions').length, 3)
-  wrapper.setProps({ value: 'lev' })
+  wrapper.setProps({
+    children: drop('lev', t)
+  })
   t.is(wrapper.state('suggestions').length, 1)
   t.is(wrapper.state('suggestions')[0], 'level')
 })
 
 test('no more suggestions', t => {
   const { wrapper } = t.context
-  wrapper.setProps({ value: 'levv' })
+  wrapper.setProps({
+    children: drop('levv', t)
+  })
   t.is(wrapper.state('suggestions').length, 0)
 })
 
 test('shows enumerations for selected attribute', t => {
   const { wrapper } = t.context
-  wrapper.setProps({ value: 'level:' })
+  wrapper.setProps({
+    children: drop('level:', t)
+  })
   t.is(wrapper.state('suggestions').length, 2)
   t.is(wrapper.state('suggestions')[0], 'info')
   t.is(wrapper.state('selectedIdx'), 0)
@@ -39,35 +57,48 @@ test('shows enumerations for selected attribute', t => {
 
 test('adds wildcard suggestion with enums', t => {
   const { wrapper } = t.context
-  wrapper.setProps({ value: 'level:i' })
+  wrapper.setProps({
+    children: drop('level:i', t)
+  })
   t.is(wrapper.state('suggestions').length, 2)
   t.is(wrapper.state('suggestions')[1], 'i*')
 })
 
 test('addon suggestions when no enumerations', t => {
   const { wrapper } = t.context
-  wrapper.setProps({ value: 'other:' })
+  wrapper.setProps({
+    children: drop('other:', t)
+  })
   t.is(wrapper.state('suggestions').length, 0)
   t.is(wrapper.state('selectedIdx'), 2)
-  wrapper.setProps({ value: 'other:foo' })
+
+  wrapper.setProps({
+    children: drop('other:foo', t)
+  })
   t.is(wrapper.state('suggestions')[0], '"foo"')
   t.is(wrapper.state('suggestions')[1], 'foo*')
 })
 
 test('suggests wildcard insite quotes', t => {
   const { wrapper } = t.context
-  wrapper.setProps({ value: 'other:"foo b"' })
+  wrapper.setProps({
+    children: drop('other:"foo b"', t)
+  })
   t.is(wrapper.state('suggestions').length, 2)
   t.is(wrapper.state('suggestions')[0], '"foo b"')
   t.is(wrapper.state('suggestions')[1], '"foo b*"')
-  wrapper.setProps({ value: 'other:"foo b*"' })
+  wrapper.setProps({
+    children: drop('other:"foo b*"', t)
+  })
   t.is(wrapper.state('suggestions').length, 1)
   t.is(wrapper.state('suggestions')[0], '"foo b*"')
 })
 
 test('detects negation and operator', t => {
   const { wrapper } = t.context
-  wrapper.setProps({ value: '-response:>=400' })
+  wrapper.setProps({
+    children: drop('-response:>=400', t)
+  })
   t.true(wrapper.state('negated'))
   t.is(wrapper.state('prepended'), '-')
   t.is(wrapper.state('operator'), '>=')
@@ -89,10 +120,14 @@ test('navigates with keyboard', t => {
 test('shows correct operators for type', t => {
   const { wrapper } = t.context
   // number attribute
-  wrapper.setProps({ value: 'http_response:' })
+  wrapper.setProps({
+    children: drop('http_response:', t)
+  })
   t.is(wrapper.instance().getOperators().length, 4)
   // string attribute
-  wrapper.setProps({ value: 'level:' })
+  wrapper.setProps({
+    children: drop('level:', t)
+  })
   t.is(wrapper.instance().getOperators().length, 0)
 })
 
@@ -102,7 +137,9 @@ test('suggestion is selected for attribute/value', t => {
   // selecting attribute
   wrapper.simulateKey(13)
   t.true(onSelect.firstCall.calledWith('level', ':'))
-  wrapper.setProps({ value: 'level:' })
+  wrapper.setProps({
+    children: drop('level:', t)
+  })
   // selecting value
   wrapper.simulateKey(13)
   t.true(onSelect.secondCall.calledWith('level:info'))
@@ -114,7 +151,9 @@ test('negation is toggled', t => {
   wrapper.instance().setOperator('-')
   t.true(onSelect.firstCall.calledWith('-'))
   // has a value, make sure it prepends
-  wrapper.setProps({ value: 'level' })
+  wrapper.setProps({
+    children: drop('level', t)
+  })
   wrapper.instance().setOperator('-')
   t.true(onSelect.secondCall.calledWith('-level'))
 })
@@ -122,11 +161,15 @@ test('negation is toggled', t => {
 test('number operator is toggled', t => {
   const { wrapper, onSelect } = t.context
   // toggle on
-  wrapper.setProps({ value: 'http_response:400' })
+  wrapper.setProps({
+    children: drop('http_response:400', t)
+  })
   wrapper.instance().setOperator('>=')
   t.true(onSelect.firstCall.calledWith('http_response:>=400'))
   // toggle off
-  wrapper.setProps({ value: 'http_response:>=400' })
+  wrapper.setProps({
+    children: drop('http_response:>=400', t)
+  })
   wrapper.instance().setOperator('>=')
   t.true(onSelect.secondCall.calledWith('http_response:400'))
 })
