@@ -1,105 +1,47 @@
 {
-  "name": "@thorin8k/react-query-assist",
-  "version": "2.0.0",
-  "description": "A smart search bar for React",
-  "license": "MIT",
-  "homepage": "https://github.com/thorin8k/react-query-assist",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/thorin8k/react-query-assist.git"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
-  "keywords": [
-    "react",
-    "query",
-    "assist",
-    "search",
-    "token",
-    "highlight",
-    "autocomplete",
-    "autosuggest",
-    "dropdown"
-  ],
-  "files": [
-    "css",
-    "es",
-    "lib",
-    "umd"
-  ],
-  "main": "lib/index.js",
-  "module": "es/index.js",
-  "scripts": {
-    "prebuild": "nwb clean-module && nwb clean-demo",
-    "build": "nwb build-react-component",
-    "test:lint": "standard --verbose | snazzy",
-    "test:unit": "ava --no-cache src/**/*.spec.js",
-    "test:integration": "ava --no-cache tests/**/*.test.js",
-    "test": "npm-run-all test:*",
-    "start": "nwb serve-react-demo",
-    "prepare": "npm run build"
-  },
-  "peerDependencies": {
-    "react": "^17.0.2"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.0.0-beta.42",
-    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.42",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.42",
-    "@babel/polyfill": "^7.0.0-beta.42",
-    "@babel/preset-env": "^7.0.0-beta.42",
-    "@babel/preset-react": "^7.0.0-beta.42",
-    "@babel/register": "^7.0.0-beta.42",
-    "ava": "^1.0.0-beta.3",
-    "babel-eslint": "^8.2.2",
-    "enzyme": "^3.3.0",
-    "jsdom": "^22.0.0",
-    "npm-run-all": "^4.1.2",
-    "nwb": "0.21.x",
-    "prettier-standard": "^16.4.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "sinon": "^4.4.8",
-    "snazzy": "^7.1.1",
-    "standard": "^11.0.1"
-  },
-  "dependencies": {
-    "@emotion/cache": "^11.11.0",
-    "@emotion/core": "^11.0.0",
-    "@emotion/css": "^11.11.0",
-    "@emotion/react": "^11.11.0",
-    "@emotion/styled": "^11.11.0",
-    "@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
-    "escape-string-regexp": "^1.0.5",
-    "prop-types": "^15.6.1",
-    "react-textarea-autosize": "^8.4.1",
-    "styled-system": "^5.1.5"
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react"
-    ],
-    "plugins": [
-      "@babel/plugin-proposal-class-properties",
-      "@babel/plugin-proposal-object-rest-spread"
-    ]
-  },
-  "ava": {
-    "require": [
-      "@babel/register",
-      "@babel/polyfill",
-      "./tests/helpers.js"
-    ]
-  },
-  "standard": {
-    "parser": "babel-eslint",
-    "globals": [
-      "beforeEach",
-      "afterEach",
-      "describe",
-      "it"
-    ]
-  }
+    "name": "@thorin8k/react-query-assist",
+    "version": "2.0.2",
+    "private": false,
+    "dependencies": {
+        "@emotion/core": "^11.0.0",
+        "@emotion/css": "^11.11.0",
+        "@emotion/react": "^11.11.0",
+        "@emotion/styled": "^11.11.0",
+        "escape-string-regexp": "^1.0.5",
+        "prop-types": "^15.6.1",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-scripts": "5.0.1",
+        "react-textarea-autosize": "^8.4.1",
+        "styled-system": "^5.1.5"
+    },
+    "main": "./dist/lib.umd.js",
+    "module": "./dist/lib.module.js",
+    "source": "src/lib.package.js",
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "eject": "react-scripts eject",
+        "build:lib": "microbundle --jsx React.createElement --jsxFragment React.Fragment --jsxImportSource react"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "microbundle": "^0.15.1"
+    }
 }

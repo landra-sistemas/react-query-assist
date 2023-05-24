@@ -1,8 +1,0 @@
-{
-    "[javascript]": {
-        "editor.defaultFormatter": "numso.prettier-standard-vscode"
-    },
-    "[javascriptreact]": {
-        "editor.defaultFormatter": "numso.prettier-standard-vscode""
-    },
-}

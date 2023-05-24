@@ -1,427 +1,148 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import { extractTokens } from './utils/token'
-import Dropdown from './components/dropdown'
-import OutsideAlerter from './utils/outside-click'
+import React, { Component } from "react";
+import { render } from "react-dom";
+import styled from "@emotion/styled";
+import { injectGlobal } from "@emotion/css";
+import QueryAssist from "./component/index.js";
 
-import {
-  Container,
-  InputContainer,
-  Input,
-  Overlay,
-  Inline,
-  Token
-} from './index.styl'
-
-export default class extends Component {
-  static propTypes = {
-    // eslint-disable-line
-    debug: PropTypes.bool,
-    data: PropTypes.array,
-    nameKey: PropTypes.string,
-    nameKeyIncludes: PropTypes.array,
-    defaultValue: PropTypes.string,
-    placeholder: PropTypes.string,
-    onChange: PropTypes.func,
-    onSubmit: PropTypes.func,
-    keyboardHelpers: PropTypes.bool,
-    collapseOnBlur: PropTypes.bool,
-    footerComponent: PropTypes.func,
-    inputProps: PropTypes.object,
-    dropdownProps: PropTypes.object,
-    selectorProps: PropTypes.object,
-    listProps: PropTypes.object,
-    alwaysLeft: PropTypes.bool, // Choose if element will be always left
-    translations: PropTypes.object
+injectGlobal`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, sans-serif;
   }
+`;
 
-  static defaultProps = {
-    // eslint-disable-line
-    data: [],
-    nameKey: 'name',
-    nameKeyIncludes: ['name'],
-    defaultValue: '',
-    onChange: () => {},
-    onSubmit: () => {},
-    placeholder: 'Search',
-    inputProps: {},
-    dropdownProps: {},
-    selectorProps: {},
-    listProps: {}
-  }
+const Container = styled("div")`
+  background: #282b37;
+  width: 100vw;
+  height: 100vh;
+  padding: 20px;
+`;
 
-  constructor (props) {
-    super(props)
-    this.onFocus = this.onFocus.bind(this)
-    this.onBlur = this.onBlur.bind(this)
-    this.onKeyDown = this.onKeyDown.bind(this)
-    this.onChange = this.onChange.bind(this)
-    this.onAutosuggest = this.onAutosuggest.bind(this)
-    this.onSelectValue = this.onSelectValue.bind(this)
-    this.handleEnterKey = this.handleEnterKey.bind(this)
-    this.shouldAutosuggest = this.shouldAutosuggest.bind(this)
-    this.onClose = this.onClose.bind(this)
-    // this.onClickToken = this.onClickToken.bind(this)
-    this.extract = this.extract.bind(this)
-    this.getCurrentChunk = this.getCurrentChunk.bind(this)
-    this.buildOverlay = this.buildOverlay.bind(this)
-    this.state = {
-      focused: false,
-      value: props.defaultValue,
-      attributes: props.data,
-      overlayComponents: [],
-      dropdownClosed: false,
-      dropdownOpen: false,
-      dropdownValue: null,
-      dropdownX: null,
-      dropdownY: null
-    }
-  }
+const Title = styled("h2")`
+  color: #ffffff;
+  margin-bottom: 15px;
+  font-weight: 600;
+`;
 
-  componentDidMount () {
-    this.setState({
-      overlayComponents: this.buildOverlay(this.state.value)
-    })
-  }
+const Assist = styled(QueryAssist)`
+  margin-bottom: 50px;
+`;
 
-  componentDidUpdate (prevProps, prevState) {
-    const { value, attributes } = this.state
+const Footer = styled("div")`
+  padding: 15px;
+  text-align: center;
+`;
 
-    if (value !== prevState.value) {
-      this.props.onChange(value)
-    }
+export const Link = styled("a")`
+  display: inline-block;
+  background: #6554af;
+  border: 1px solid #58499b;
+  border-radius: 4px;
+  color: #ffffff;
+  font-weight: 300;
+  text-decoration: none;
+  padding: 7px 15px;
+  cursor: pointer;
+`;
 
-    if (
-      value !== prevState.value ||
-      attributes.length !== prevState.attributes.length
-    ) {
-      this.setState(
-        {
-          overlayComponents: this.buildOverlay(value)
-        },
-        this.onAutosuggest
-      )
-    }
-  }
+const data = [
+  {
+    name: "level",
+    type: "string",
+    enumerations: ["info", "error", "warn", "debug", "critical"],
+  },
+  {
+    name: "http.method",
+    type: "string",
+    enumerations: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  },
+  {
+    name: "http_response.status",
+    type: "int",
+    enumerations: [200, 400, 404, 500],
+  },
+  {
+    name: "heroku.dyno_id",
+    type: "string",
+    enumerations: null,
+  },
+  {
+    name: "heroku.source",
+    type: "string",
+    enumerations: null,
+  },
+];
 
-  componentWillReceiveProps (nextProps) {
-    const newState = {}
+class Demo extends Component {
+  render() {
+    const inputProps = {
+      bg: "#393B4A",
+      border: "1px solid #1F1E21",
+      borderRadius: "4px",
+      color: "#9FA2B2",
+      placeholderColor: "rgba(255, 255, 255, 0.2)",
+      tokenColor: "#FFFFFF",
+      fontSize: "16px",
+      fontWeight: 300,
+      fontFamily: "monospace",
+      lineHeight: "20px",
+      p: "15px 20px",
+    };
 
-    // default value can be empty string (to clear search)
-    if (nextProps.defaultValue !== undefined) {
-      newState.value = nextProps.defaultValue
-    }
+    const dropdownProps = {
+      bg: "#808498",
+      borderRadius: "2px",
+      fontSize: "14px",
+      fontWeight: 400,
+      fontFamily: "-apple-system, sans-serif",
+    };
 
-    if (nextProps.data) {
-      newState.attributes = nextProps.data
-    }
+    const selectorProps = {
+      bg: "#6554AF",
+      border: "1px solid #58499B",
+      color: "#FFFFFF",
+    };
 
-    this.setState(newState)
-  }
-
-  onFocus (evt) {
-    this.setState(
-      {
-        focused: true
-      },
-      this.onAutosuggest
-    )
-  }
-
-  onBlur (evt) {
-    this.setState({
-      focused: false
-    })
-  }
-
-  onKeyDown (evt) {
-    if (evt.keyCode === 13) {
-      this.handleEnterKey(evt)
-    }
-
-    // close dropdown if navigating with arrow keys
-    if (evt.keyCode === 37 || evt.keyCode === 39) {
-      this.onClose()
-    }
-  }
-
-  onChange (evt) {
-    this.setState({
-      value: evt.target.value
-    })
-  }
-
-  onAutosuggest () {
-    const { value } = this.state
-    const { offsetLeft, offsetTop } = this._marker
-
-    const { chunk } = this.getCurrentChunk(value)
-    const suggest = this.shouldAutosuggest(chunk)
-
-    if (suggest) {
-      this.setState({
-        dropdownClosed: false,
-        dropdownOpen: true,
-        dropdownValue: chunk,
-        dropdownX: offsetLeft,
-        dropdownY: offsetTop + 25 // line height + 5 extra padding
-      })
-    } else {
-      this.setState({
-        dropdownOpen: false
-      })
-    }
-  }
-
-  onSelectValue (chunk, appended = '') {
-    const { value } = this.state
-    const { index, indexEnd } = this.getCurrentChunk(value)
-
-    const before = value.slice(0, index)
-    const after = value.slice(indexEnd)
-    const position = index + chunk.length + appended.length
-    // const positionEnd = position + after.length
-
-    this.setState(
-      {
-        value: `${before}${chunk}${appended}${after}`,
-        dropdownClosed: appended !== ':'
-      },
-      () => {
-        // position caret at the end of the inserted value
-        this._input.focus()
-        this._input.setSelectionRange(position, position)
-      }
-    )
-  }
-
-  handleEnterKey (evt) {
-    // whether this input is infocus
-    const isFocused = document.activeElement === this._input
-
-    // submit on enter, line break on shift enter
-    // dropdown handles enter key globally, so prevent clash
-    if (!evt.shiftKey && isFocused && !this.state.dropdownOpen) {
-      evt.preventDefault()
-      this.props.onSubmit(this.state.value)
-    }
-  }
-
-  shouldAutosuggest (chunk) {
-    const { selectionStart } = this._input
-    const { value, focused } = this.state
-
-    // next character is whitespace, closing paren or null
-    const nextCharIsEmpty =
-      !value.charAt(selectionStart) ||
-      /[)\s]/.test(value.charAt(selectionStart))
-
-    // whitespace/negation/paren before and whitespace after caret
-    const isNewWord =
-      nextCharIsEmpty && /[\s-(]/.test(value.charAt(selectionStart - 1))
-
-    // cursor is at end of the current word
-    const atEndOfWord =
-      nextCharIsEmpty && /[^)\s]/.test(value.charAt(selectionStart - 1))
+    const footer = () => (
+      <Footer>
+        <Link
+          target="_blank"
+          href="https://timber.io/docs/app/console/searching"
+        >
+          Learn more
+        </Link>
+      </Footer>
+    );
 
     return (
-      focused &&
-      (!value || isNewWord || (atEndOfWord && !this.state.dropdownClosed))
-    )
-  }
+      <Container>
+        <Title>Basic Example</Title>
+        <Assist
+          placeholder="Search Logs ⌘ ⇧ F"
+          onSubmit={(query) => console.log(`output query: ${query}`)}
+          data={data}
+          inputProps={inputProps}
+          dropdownProps={dropdownProps}
+          selectorProps={selectorProps}
+          footerComponent={footer}
+        />
 
-  onClose (forWord) {
-    this.setState({
-      dropdownOpen: false,
-      // don't reopen if it was closed for current word
-      dropdownClosed: forWord || false
-    })
-  }
-
-  // onClickToken (start, end) {
-  //   // move cursor to end of token
-  //   this._input.focus()
-  //   this._input.setSelectionRange(end, end)
-  // }
-
-  extract (value) {
-    const { nameKeyIncludes } = this.props
-    const { attributes } = this.state
-
-    return extractTokens(value, attributes, nameKeyIncludes)
-  }
-
-  getCurrentChunk (value) {
-    const { selectionStart } = this._input
-
-    // get location of each token found in value
-    const tokens = this.extract(value)
-
-    // find index of the closest previous whitespace
-    const prevStr = value.substring(0, selectionStart)
-    const prevMatch = prevStr.match(/[^\s]*$/)
-    const prevIdx = prevMatch
-      ? prevStr.lastIndexOf(prevMatch[prevMatch.length - 1])
-      : -1
-
-    // determine correct index for the start of the chunk
-    let index = prevIdx
-    for (const [start, end] of tokens.reverse()) {
-      // token is between whitespace and cursor
-      if (selectionStart > end && prevIdx < start) {
-        index = end
-        break
-      }
-      // at the end of or inside a token (thats what she said)
-      if (selectionStart > start && selectionStart <= end) {
-        index = start
-        break
-      }
-      // there is whitespace in the token
-      if (prevIdx > start && prevIdx < end) {
-        index = end
-        break
-      }
-    }
-
-    // value is result of cursor back to beginning of chunk
-    const chunk = value.substring(index, selectionStart)
-    const indexEnd = index + chunk.length
-
-    return {
-      index,
-      indexEnd,
-      chunk
-    }
-  }
-
-  buildTokens (value, relativeToIdx = 0) {
-    const chunks = []
-    const positions = this.extract(value)
-
-    let currentPosition = 0
-    positions.reduce(
-      (prev, next) => {
-        // const startIdx = next[0] + relativeToIdx
-        // const endIdx = next[1] + relativeToIdx
-
-        chunks.push(value.substring(prev[1], next[0]))
-        chunks.push(
-          <Token
-            key={`token-${next[0]}`}
-            tokenColor={this.props.inputProps.tokenColor}
-          >
-            {value.substring(next[0], next[1])}
-          </Token>
-        )
-
-        currentPosition = next[1]
-        return next
-      },
-      [null, 0]
-    )
-
-    chunks.push(value.substring(currentPosition))
-    return chunks.filter(Boolean)
-  }
-
-  buildOverlay (value) {
-    // figure out where we should split the overlay,
-    // so we know where to position the dropdown
-    const { index } = this.getCurrentChunk(value)
-
-    // everything to the left of the current word/token
-    const stuffOnLeft = this.buildTokens(value.substring(0, index))
-
-    // everything to the right of the current word/token
-    // need to have default whitespace or dropdown will not find position of caret
-    const stuffOnRight = this.buildTokens(value.substring(index) || ' ', index)
-
-    // since it will never split up a token,
-    // we can build each side of cursor independently
-    return [
-      stuffOnLeft,
-      <Inline
-        key={`after-${index}`}
-        style={{ outline: this.props.debug ? '1px solid red' : 'none' }}
-        ref={ref => (this._marker = ref)}
-      >
-        {stuffOnRight}
-      </Inline>
-    ]
-  }
-
-  render () {
-    const {
-      nameKey,
-      className,
-      inputProps,
-      placeholder,
-      keyboardHelpers,
-      collapseOnBlur,
-      footerComponent,
-      dropdownProps,
-      selectorProps,
-      listProps,
-      alwaysLeft,
-      translations
-    } = this.props
-
-    const {
-      value,
-      attributes,
-      dropdownOpen,
-      dropdownValue,
-      dropdownX,
-      dropdownY,
-      overlayComponents
-    } = this.state
-
-    const collapsed = !this.state.focused && collapseOnBlur
-
-    return (
-      <OutsideAlerter notify={this.onClose}>
-        <Container className={className}>
-          <InputContainer {...inputProps} onClick={() => this._input.focus()}>
-            <Overlay collapsed={collapsed}>{overlayComponents}</Overlay>
-
-            <Input
-              autoComplete='off'
-              autoCorrect='off'
-              autoCapitalize='off'
-              spellCheck='false'
-              autoFocus={inputProps.autoFocus}
-              maxRows={collapsed ? 1 : undefined}
-              placeholder={placeholder}
-              placeholderColor={inputProps.placeholderColor}
-              value={value}
-              onFocus={this.onFocus}
-              onBlur={this.onBlur}
-              onKeyDown={this.onKeyDown}
-              onChange={this.onChange}
-              ref={ref => (this._input = ref)}
-            />
-          </InputContainer>
-
-          {dropdownOpen && (
-            <Dropdown
-              keyboardHelpers={keyboardHelpers}
-              footerComponent={footerComponent}
-              attributes={attributes}
-              value={dropdownValue}
-              nameKey={nameKey}
-              onSelect={this.onSelectValue}
-              onClose={this.onClose}
-              offsetX={alwaysLeft ? 0 : dropdownX}
-              offsetY={dropdownY}
-              dropdownProps={dropdownProps}
-              selectorProps={selectorProps}
-              listProps={listProps}
-              translations={translations}
-            />
-          )}
-        </Container>
-      </OutsideAlerter>
-    )
+        <Title>Complex Query Example</Title>
+        <Assist
+          placeholder="Search Logs ⌘ ⇧ F"
+          defaultValue={`keyword1 (level:error AND heroku.source:"foo bar") keyword2 http.method:POST\n\t(-level:info OR http_response.status:>=400)\nkeyword3 invalid:token heroku.dyno_id:abc*`}
+          onSubmit={(query) => console.log(`output query: ${query}`)}
+          data={data}
+          inputProps={inputProps}
+          dropdownProps={dropdownProps}
+          selectorProps={selectorProps}
+          footerComponent={footer}
+        />
+      </Container>
+    );
   }
 }
+
+render(<Demo />, document.querySelector("#root"));
