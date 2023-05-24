@@ -77,6 +77,7 @@ export const Suggestions = styled('ul')`
   line-height: 20px;
   margin: 10px 0;
   overflow: auto;
+  padding-inline-start: 0;
 
   ${space}
   ${color}

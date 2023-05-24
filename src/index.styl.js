@@ -89,7 +89,7 @@ export const Overlay = styled('div')`
   outline: none;
   resize: none;
   font: inherit;
-  width: 100%;
+  max-width: 100%;
   padding: 0;
   white-space: pre-wrap;
   word-wrap: break-word;
