@@ -265,7 +265,7 @@ export default class Dropdown extends PureComponent {
         const Footer = this.props.footerComponent;
 
         return (
-            <Container left={this.props.offsetX || 0} top={this.props.offsetY || 0} {...this.props.dropdownProps}>
+            <Container left={this.props.offsetX || 0} top={this.props.offsetY || 0} {...this.props.dropdownProps} data-testid="dropdown">
                 <Suggestions {...this.props.listProps} ref={(ref) => (this._list = ref)}>
                     {this.state.suggestions.map((suggestion, key) => {
                         const isActive = this.state.highlightedIdx === key;
