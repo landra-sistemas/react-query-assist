@@ -194,6 +194,7 @@ export default class QueryAssist extends Component {
         if (!evt.shiftKey && isFocused && !this.state.dropdownOpen) {
             evt.preventDefault();
             this.props.onSubmit(this.state.value);
+            evt.target.blur();
         }
     }
 
