@@ -27,6 +27,7 @@ export default class Dropdown extends PureComponent {
         // eslint-disable-line
         value: "",
         nameKey: "name",
+        translationKey:"translation",
         onSelect: () => {},
         onClose: () => {},
         keyboardHelpers: true,
@@ -69,6 +70,7 @@ export default class Dropdown extends PureComponent {
     componentWillReceiveProps(nextProps) {
         if (this.props.value !== nextProps.value) {
             this.filterSuggestions(nextProps.value);
+
         }
     }
 
@@ -148,9 +150,9 @@ export default class Dropdown extends PureComponent {
     }
 
     getSuggestions(attribute) {
-        const { nameKey, attributes } = this.props;
-
-        return attribute ? attribute.enumerations || [] : attributes.map((attr) => attr[nameKey]);
+        const { nameKey, attributes, translationKey} = this.props;
+        // all options in dropdown
+        return attribute ? attribute.enumerations || [] : attributes.map((attr) => attr[translationKey] || attr[nameKey]);
     }
 
     getSuggestionAddons(attribute, parsed) {
@@ -173,8 +175,15 @@ export default class Dropdown extends PureComponent {
 
     filterSuggestions(value) {
         const { nameKey, attributes } = this.props;
-
-        const parsed = parseToken(value);
+        let parsed = ""
+        if (value!="") {
+          const valueFormatted = value.split(":")
+          const attr = attributes.filter(x=>x?.translation == valueFormatted[0] || x[nameKey] == valueFormatted[0])
+          parsed = parseToken(attr[0]?.name+":")
+        }
+        else {
+          parsed = parseToken(value);
+        }
 
         const hasAttributeName = parsed.attributeName && value.indexOf(":") > -1;
         const selectedIdx = hasAttributeName ? attributes.findIndex((attr) => attr[nameKey] === parsed.attributeName) : -1;
