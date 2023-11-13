@@ -52,6 +52,7 @@ const data = [
     name: "level",
     type: "string",
     enumerations: ["info", "error", "warn", "debug", "critical"],
+    translation: "Level"
   },
   {
     name: "http.method",

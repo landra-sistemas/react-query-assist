@@ -28,8 +28,8 @@ export default class Dropdown extends PureComponent {
         value: "",
         nameKey: "name",
         translationKey: "translation",
-        onSelect: () => {},
-        onClose: () => {},
+        onSelect: () => { },
+        onClose: () => { },
         keyboardHelpers: true,
         footerComponent: () => null,
     };
@@ -173,18 +173,11 @@ export default class Dropdown extends PureComponent {
     }
 
     filterSuggestions(value) {
-        const { nameKey, attributes } = this.props;
-        let parsed = "";
-        if (value != "") {
-            const valueFormatted = value.split(":");
-            const attr = attributes.filter((x) => x?.translation == valueFormatted[0] || x[nameKey] == valueFormatted[0]);
-            parsed = parseToken(attr[0]?.name + ":");
-        } else {
-            parsed = parseToken(value);
-        }
+        const { nameKey, translationKey, attributes } = this.props;
+        let parsed = parseToken(value);
 
         const hasAttributeName = parsed.attributeName && value.indexOf(":") > -1;
-        const selectedIdx = hasAttributeName ? attributes.findIndex((attr) => attr[nameKey] === parsed.attributeName) : -1;
+        const selectedIdx = hasAttributeName ? attributes.findIndex((attr) => attr[nameKey] === parsed.attributeName || attr[translationKey] === parsed.attributeName) : -1;
 
         const attribute = this.getAttribute(selectedIdx);
         const suggestions = this.getSuggestions(attribute);
