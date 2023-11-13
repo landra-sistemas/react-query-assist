@@ -129,3 +129,18 @@ By default, [keyboard helpers](#keyboardHelpers) for the dropdown are enabled. M
 | `translations`                                  | object    | Object to translate the NEGATE and other static strings: {negate: "", navigate: "", select: ""}                                                         | undefined     |
 
 [demo]: demo.gif
+
+
+
+
+## Development
+
+TODO: improve
+
+
+Publish commands:
+
+```
+npm run build:lib
+npm publish
+```
