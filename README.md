@@ -32,6 +32,7 @@ const data = [
     name: "some_attribute",
     type: "string",
     enumerations: ["enum1", "enum2", "enum3" /* ... */],
+    translation : "your translation" /* optional property (used to display the name in the dropdown)*/
   },
 ];
 
