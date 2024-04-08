@@ -1,6 +1,6 @@
 {
     "name": "@landra_sistemas/react-query-assist",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "private": false,
     "dependencies": {
         "@babel/preset-env": "^7.23.3",
