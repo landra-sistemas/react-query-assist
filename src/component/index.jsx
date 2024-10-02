@@ -6,7 +6,7 @@ import OutsideAlerter from "./utils/outside-click";
 
 import { Container, InputContainer, Input, Overlay, Inline, Token } from "./index.styl";
 
-export default class QueryAssist extends Component {
+export class QueryAssist extends Component {
     static propTypes = {
         // eslint-disable-line
         debug: PropTypes.bool,
@@ -351,7 +351,6 @@ export default class QueryAssist extends Component {
                 <Container className={className}>
                     <InputContainer {...inputProps} onClick={() => this._input.focus()}>
                         <Overlay collapsed={collapsed}>{overlayComponents}</Overlay>
-
                         <Input
                             autoComplete="off"
                             autoCorrect="off"
