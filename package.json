@@ -7,7 +7,16 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "preversion": "npm install",
+    "version": "npm run build && git add -A",
+    "postversion": "git push --follow-tags && npm publish --access public",
+    "release:patch": "npm version patch -m \"Bump version %s\"",
+    "release:minor": "npm version minor -m \"Bump version %s\"",
+    "release:major": "npm version major -m \"Bump version %s\"",
+    "release:alpha": "npm version prerelease --preid=alpha -m \"Bump version %s\"",
+    "release:beta": "npm version prerelease --preid=beta -m \"Bump version %s\"",
+    "release:rc": "npm version prerelease --preid=rc -m \"Bump version %s\""
   },
   "dependencies": {
     "@emotion/core": "^11.0.0",
